@@ -69,6 +69,10 @@ class Hand(BaseModel):
 
 
 def mediapipe_2_hand(hand_landmarks) -> Hand:
+    """
+    Covnerts mediapipe object to our Hand
+    Refer to media/hand_landmarks.png
+    """
     lms = [(0, 0, 0)] * 21
     for id, lm in enumerate(hand_landmarks.landmark):
         # Normalized landmarks in range [0.0, 1.0], relative to the image
