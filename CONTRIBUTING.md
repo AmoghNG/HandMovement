@@ -12,6 +12,35 @@ This instructions are for linux base systems. (Linux, MacOS, BSD, etc.)
 - Enter the directory `cd HandMovement`
 - Add upstream repo `git remote add upstream https://github.com/AmoghNG/HandMovement`
 
+## Conda for virtual environment on Windows
+
+```bash
+conda create --name hand
+conda activate hand
+
+pip install -e .[test]
+```
+
+## Linting before commit
+
+```bash
+# Formatting
+isort handmovement/
+black -l 79 handmovement/
+black -l 79 tests/
+
+# Linting             ## Run pep8, black, mypy linters.
+flake8 handmovement/
+black -l 79 --check handmovement/
+black -l 79 --check tests/
+mypy --ignore-missing-imports handmovement/
+
+# Testing        ## Run tests and generate coverage report.
+pytest -v --cov-config .coveragerc --cov=handmovement -l --tb=short --maxfail=1 tests/
+coverage xml
+coverage html
+```
+
 ## Setting up your own virtual environment
 
 Run `make virtualenv` to create a virtual environment.
