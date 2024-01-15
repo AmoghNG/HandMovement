@@ -4,12 +4,14 @@ Takes camera input, finds the right hand and sends actuator
 commands to the arduino via serial
 """
 
+import time
+
 import cv2
 import mediapipe as mp
 import numpy as np
 
 from handmovement.arduino import SerialInterface
-from handmovement.schema import mediapipe_2_hand
+from handmovement.schema import ActuatorData, mediapipe_2_hand
 
 
 def main():  # pragma: no cover
@@ -21,10 +23,17 @@ def main():  # pragma: no cover
 
 
     """
+
     arduino = SerialInterface(
         port="COM5",
-        baudrate=57600,
+        baudrate=115200,
     )
+
+    for i in range(0, 100, 1):
+        dummy_data = ActuatorData(thumb=i, index=i, middle=i, ring=i, little=i)
+        arduino.send_actuator_percs(dummy_data, wait_for_ack=True)
+        time.sleep(0.1)
+
     mp_drawing = mp.solutions.drawing_utils
     mp_hands = mp.solutions.hands
 
@@ -104,7 +113,7 @@ def main():  # pragma: no cover
                         old_actuator_data = actuator_data
 
                         arduino.send_actuator_percs(
-                            actuator_data=actuator_percs, wait_for_ack=False
+                            actuator_data=actuator_percs, wait_for_ack=True
                         )
 
             cv2.imshow("MediaPipe Hands", image)

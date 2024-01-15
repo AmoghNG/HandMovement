@@ -8,8 +8,8 @@ import numpy as np
 from pydantic import BaseModel
 
 # Initialsing max and min measures referrence point
-tmaxc = 15.5
-tminc = 0
+tmaxc = 17
+tminc = 2
 trmeasure = 3
 
 
@@ -55,7 +55,7 @@ class Hand(BaseModel):
                 )
                 - tmi
             )
-            / tma
+            / (tma - tmi)
         ) * 100
         tpercent_int = int(tpercent)
         return ActuatorData(
