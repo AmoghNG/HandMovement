@@ -6,7 +6,7 @@
 #include <SoftwareSerial.h>
 #include <Servo.h>
 
-Servo thumb_servo, index_servo;
+Servo thumb_servo, index_servo, middle_servo, ring_servo, little_servo;
 
 
 void setup() {
@@ -18,9 +18,15 @@ void setup() {
 
   thumb_servo.attach(9);
   index_servo.attach(10);
+  middle_servo.attach(11);
+  ring_servo.attach(12);
+  little_servo.attach(13);
 
   thumb_servo.write(0);
   index_servo.write(0);
+  middle_servo.write(0);
+  ring_servo.write(0);
+  little_servo.write(0);
 }
 
 void loop() { // run over and over
@@ -86,8 +92,14 @@ void loop() { // run over and over
 
     thumb = map(thumb, 0, 100, 0, 180);
     index = map(index, 0, 100, 0, 180);
+    middle = map(middle, 0, 100, 0, 180);
+    ring = map(ring, 0, 100, 0, 180);
+    little = map(little, 0, 100, 0, 180);
 
     thumb_servo.write(thumb);
     index_servo.write(index);
+    middle_servo.write(middle);
+    ring_servo.write(ring);
+    little_servo.write(little);
   }
 }
