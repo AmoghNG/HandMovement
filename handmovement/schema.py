@@ -51,11 +51,67 @@ class Hand(BaseModel):
     little: Finger
 
     def get_actuators(self) -> ActuatorData:
-        T = int((np.linalg.norm(np.asarray(self.thumb.tip) - np.asarray(self.little.mcp))/(tmaxc-tminc))*100)-45
-        I = int((np.linalg.norm(np.asarray(self.index.tip) - np.asarray(self.wrist))/(imaxc-iminc))*100)-62
-        M = int((np.linalg.norm(np.asarray(self.middle.tip) - np.asarray(self.wrist))/(mmaxc-mminc))*100)-32
-        R = int((np.linalg.norm(np.asarray(self.ring.tip) - np.asarray(self.wrist))/(rmaxc-rminc))*100)-29
-        L = int((np.linalg.norm(np.asarray(self.little.tip) - np.asarray(self.wrist))/(lmaxc-lminc))*100)-58
+        T = (
+            int(
+                (
+                    np.linalg.norm(
+                        np.asarray(self.thumb.tip)
+                        - np.asarray(self.little.mcp)
+                    )
+                    / (tmaxc - tminc)
+                )
+                * 100
+            )
+            - 45
+        )
+        I = (
+            int(
+                (
+                    np.linalg.norm(
+                        np.asarray(self.index.tip) - np.asarray(self.wrist)
+                    )
+                    / (imaxc - iminc)
+                )
+                * 100
+            )
+            - 62
+        )
+        M = (
+            int(
+                (
+                    np.linalg.norm(
+                        np.asarray(self.middle.tip) - np.asarray(self.wrist)
+                    )
+                    / (mmaxc - mminc)
+                )
+                * 100
+            )
+            - 32
+        )
+        R = (
+            int(
+                (
+                    np.linalg.norm(
+                        np.asarray(self.ring.tip) - np.asarray(self.wrist)
+                    )
+                    / (rmaxc - rminc)
+                )
+                * 100
+            )
+            - 29
+        )
+        L = (
+            int(
+                (
+                    np.linalg.norm(
+                        np.asarray(self.little.tip) - np.asarray(self.wrist)
+                    )
+                    / (lmaxc - lminc)
+                )
+                * 100
+            )
+            - 58
+        )
 
         T = min(max(0, T), 100)
         I = min(max(0, I), 100)

@@ -1,6 +1,7 @@
 """
 Interface to talk to the arduino
 """
+import numpy as np
 import serial
 
 from handmovement.schema import ActuatorData
@@ -32,27 +33,17 @@ class SerialInterface:
     def send_actuator_percs(
         self, actuator_data: ActuatorData, wait_for_ack: bool = False
     ) -> bool:
-        self.ser.flush()
-        self.ser.reset_input_buffer()
-        self.ser.reset_output_buffer()
+        # self.ser.flush()
+        # self.ser.reset_input_buffer()
+        # self.ser.reset_output_buffer()
+
         data_tuple = actuator_data.to_list()
         # Clip the data b/w (0,100)
         data_list = [min(max(0, x), 100) for x in data_tuple]
-        # data = " ".join(map(
-        #     lambda x: str(x).zfill(3), data_list
-        # ))
-        # data += "\n"
-
-        # print(f'sendng to arduino: {data}')
-        # print(f'sendng to arduino: {len(data)}')
 
         # # Send data to Arduino
-        # self.ser.write(data.encode())
-        data_list = [255] + data_list
+        data_list = [126] + data_list
         # data_list = [255] + data_list + [255]
-        print(data_list)
-        # print(bytearray(data_list))
-        # print(len(bytearray(data_list)))
         self.ser.write(bytearray(data_list))
 
         if not wait_for_ack:
@@ -65,15 +56,12 @@ class SerialInterface:
             print("Error")
             return False
 
-        response = [x for x in response]
-        expected_response = [255, 255]
-
-        print(f"Response: '{response}'")
-        print(f"Expected: '{expected_response}'")
+        # response = [x for x in response]
+        response = np.frombuffer(response, dtype=np.uint8)
+        expected_response = np.array([255, 255])
 
         # Check if the data was received
-        if response == expected_response:
-            print("Data was received by Arduino.")
+        if (response == expected_response).all():
             return True
         else:
             print("Failed to send data to Arduino.")

@@ -21,19 +21,21 @@ void setup() {
 
   thumb_servo.write(0);
   index_servo.write(0);
-  // Serial.println("Connectd");
 }
 
 void loop() { // run over and over
   if (Serial.available()) {
-    int thumb = 0, index = 0, middle = 0, ring = 0, little = 0;
-    int data = Serial.read();
-    while (data != 255) {
-      Serial.write(254);
+    uint8_t thumb = 0, index = 0, middle = 0, ring = 0, little = 0;
+    while (!Serial.available()) {;}
+    uint8_t data = Serial.read();
+    while (data != 126) {
+      Serial.write(200);
       Serial.write(data);
+      while (!Serial.available()) {;}
       data = Serial.read();
     }
 
+    while (!Serial.available()) {;}
     data = Serial.read();
     if (data > 100) {
       Serial.write(101);
@@ -42,6 +44,7 @@ void loop() { // run over and over
     }
     thumb = data;
     
+    while (!Serial.available()) {;} 
     data = Serial.read();
     if (data > 100) {
       Serial.write(102);
@@ -50,6 +53,7 @@ void loop() { // run over and over
     }
     index = data;
     
+    while (!Serial.available()) {;}
     data = Serial.read();
     if (data > 100) {
       Serial.write(103);
@@ -58,6 +62,7 @@ void loop() { // run over and over
     }
     middle = data;
 
+    while (!Serial.available()) {;}
     data = Serial.read();
     if (data > 100) {
       Serial.write(104);
@@ -66,6 +71,7 @@ void loop() { // run over and over
     }
     ring = data;
 
+    while (!Serial.available()) {;}
     data = Serial.read();
     if (data > 100) {
       Serial.write(105);
@@ -74,21 +80,14 @@ void loop() { // run over and over
     }
     little = data;
 
-    // data = Serial.read();
-    // if (data != 255) {
-    //   Serial.write(106);
-    //   Serial.write(data);
-    //   return;
-    // }
-
     Serial.write(255);
     Serial.write(255);
+    // Serial.write(thumb);
 
     thumb = map(thumb, 0, 100, 0, 180);
     index = map(index, 0, 100, 0, 180);
 
     thumb_servo.write(thumb);
     index_servo.write(index);
-    // delay(15);
   }
 }
