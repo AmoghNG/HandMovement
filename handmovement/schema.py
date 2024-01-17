@@ -8,9 +8,20 @@ import numpy as np
 from pydantic import BaseModel
 
 # Initialsing max and min measures referrence point
-tmaxc = 17
-tminc = 2
-trmeasure = 3
+tmaxc = 0.4
+tminc = 0.11
+
+imaxc = 0.60
+iminc = 0.24
+
+mmaxc = 0.63
+mminc = 0.13
+
+rmaxc = 0.57
+rminc = 0.14
+
+lmaxc = 0.48
+lminc = 0.18
 
 
 class Finger(BaseModel):
@@ -40,30 +51,24 @@ class Hand(BaseModel):
     little: Finger
 
     def get_actuators(self) -> ActuatorData:
-        tsc = (
-            np.linalg.norm(
-                np.asarray(self.thumb.tip) - np.asarray(self.thumb.pip)
-            )
-            / trmeasure
-        )
-        tma = tmaxc * tsc
-        tmi = tminc * tsc
-        tpercent = (
-            (
-                np.linalg.norm(
-                    np.asarray(self.thumb.tip) - np.asarray(self.little.mcp)
-                )
-                - tmi
-            )
-            / (tma - tmi)
-        ) * 100
-        tpercent_int = int(tpercent)
+        T = int((np.linalg.norm(np.asarray(self.thumb.tip) - np.asarray(self.little.mcp))/(tmaxc-tminc))*100)-45
+        I = int((np.linalg.norm(np.asarray(self.index.tip) - np.asarray(self.wrist))/(imaxc-iminc))*100)-62
+        M = int((np.linalg.norm(np.asarray(self.middle.tip) - np.asarray(self.wrist))/(mmaxc-mminc))*100)-32
+        R = int((np.linalg.norm(np.asarray(self.ring.tip) - np.asarray(self.wrist))/(rmaxc-rminc))*100)-29
+        L = int((np.linalg.norm(np.asarray(self.little.tip) - np.asarray(self.wrist))/(lmaxc-lminc))*100)-58
+
+        T = min(max(0, T), 100)
+        I = min(max(0, I), 100)
+        M = min(max(0, M), 100)
+        R = min(max(0, R), 100)
+        L = min(max(0, L), 100)
+
         return ActuatorData(
-            thumb=tpercent_int,
-            index=0,
-            middle=0,
-            ring=0,
-            little=0,
+            thumb=T,
+            index=I,
+            middle=M,
+            ring=R,
+            little=L,
         )
         # thumb to pinky
 
