@@ -64,7 +64,7 @@ class Hand(BaseModel):
             )
             - 45
         )
-        I = (
+        Index = (
             int(
                 (
                     np.linalg.norm(
@@ -114,14 +114,14 @@ class Hand(BaseModel):
         )
 
         T = min(max(0, T), 100)
-        I = min(max(0, I), 100)
+        Index = min(max(0, Index), 100)
         M = min(max(0, M), 100)
         R = min(max(0, R), 100)
         L = min(max(0, L), 100)
 
         return ActuatorData(
             thumb=T,
-            index=I,
+            index=Index,
             middle=M,
             ring=R,
             little=L,
