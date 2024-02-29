@@ -7,6 +7,7 @@ commands to the arduino via serial
 import argparse
 import time
 
+
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -47,6 +48,11 @@ def main():  # pragma: no cover
         action="store_true",
         help="Sweep through the actuator values",
     )
+    parser.add_argument(
+        "--reset",
+        action="store_true",
+        help="Reset actuators to zero",
+    )
 
     args = parser.parse_args()
 
@@ -55,11 +61,13 @@ def main():  # pragma: no cover
             port=args.port,
             baudrate=args.baudrate,
         )
+        if args.reset:
+            exit(0)
 
     if args.sweep:
         for i in range(0, 100, 1):
             dummy_data = ActuatorData(
-                thumb=i, index=i, middle=i, ring=i, little=i
+                thumbmove=i, thumb=i, index=i, middle=i, ring=i, little=i
             )
             arduino.send_actuator_percs(dummy_data, wait_for_ack=True)
             time.sleep(1)
@@ -67,7 +75,7 @@ def main():  # pragma: no cover
     mp_drawing = mp.solutions.drawing_utils
     mp_hands = mp.solutions.hands
 
-    old_actuator_data = [0, 0, 0, 0, 0]
+    old_actuator_data = [0, 0, 0, 0, 0, 0]
     # For webcam input:
     cap = cv2.VideoCapture(0)
     with mp_hands.Hands(
@@ -120,7 +128,7 @@ def main():  # pragma: no cover
                     cv2.putText(
                         image,
                         vis_hand,
-                        (10, 30),
+                        (10, 26),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         1,
                         (255, 255, 255),

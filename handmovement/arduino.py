@@ -40,6 +40,10 @@ class SerialInterface:
         data_tuple = actuator_data.to_list()
         # Clip the data b/w (0,100)
         data_list = [min(max(0, x), 100) for x in data_tuple]
+        data_list[0] = int((data_list[0] - 30) *100/70) # standard scaler
+        data_list[0] = 100 - data_list[0]
+        data_list[4] = 100 - data_list[4]
+        data_list[2] = 100 - data_list[2]
 
         # # Send data to Arduino
         data_list = [126] + data_list
@@ -58,7 +62,7 @@ class SerialInterface:
 
         # response = [x for x in response]
         response = np.frombuffer(response, dtype=np.uint8)
-        expected_response = np.array([255, 255])
+        expected_response = np.array([121, 121])
 
         # Check if the data was received
         if (response == expected_response).all():

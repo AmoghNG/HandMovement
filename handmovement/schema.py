@@ -8,8 +8,16 @@ import numpy as np
 from pydantic import BaseModel
 
 # Initialsing max and min measures referrence point
-tmaxc = 0.4
-tminc = 0.11
+tmmaxc = 0.32 #32
+tmminc = 0.28 #28
+
+
+tmaxc = 0.28 #28
+tminc = 0.17 #17
+
+#tmaxc = 0.4
+#tminc = 0.11
+
 
 imaxc = 0.60
 iminc = 0.24
@@ -32,6 +40,7 @@ class Finger(BaseModel):
 
 
 class ActuatorData(BaseModel):
+    thumbmove : int
     thumb: int
     index: int
     middle: int
@@ -39,7 +48,7 @@ class ActuatorData(BaseModel):
     little: int
 
     def to_list(self) -> Tuple[int, int, int, int, int]:
-        return (self.thumb, self.index, self.middle, self.ring, self.little)
+        return (self.thumbmove, self.thumb, self.index, self.middle, self.ring, self.little)
 
 
 class Hand(BaseModel):
@@ -51,18 +60,31 @@ class Hand(BaseModel):
     little: Finger
 
     def get_actuators(self) -> ActuatorData:
+        TM = (
+            int(
+                (
+                    np.linalg.norm(
+                        np.asarray(self.thumb.cmc)
+                        - np.asarray(self.little.mcp)
+                    )
+                    / (tmmaxc - tmminc)
+                )
+                * 100
+            )
+            - 880
+        )
         T = (
             int(
                 (
                     np.linalg.norm(
                         np.asarray(self.thumb.tip)
-                        - np.asarray(self.little.mcp)
+                        - np.asarray(self.wrist)
                     )
                     / (tmaxc - tminc)
                 )
                 * 100
             )
-            - 45
+            - 170
         )
         I = (
             int(
@@ -113,6 +135,7 @@ class Hand(BaseModel):
             - 58
         )
 
+        TM = min(max(0, TM), 100)
         T = min(max(0, T), 100)
         I = min(max(0, I), 100)
         M = min(max(0, M), 100)
@@ -120,6 +143,7 @@ class Hand(BaseModel):
         L = min(max(0, L), 100)
 
         return ActuatorData(
+            thumbmove=TM,
             thumb=T,
             index=I,
             middle=M,
